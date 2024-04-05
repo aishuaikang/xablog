@@ -7,11 +7,11 @@ class Service {
     public db: MySql2Database<typeof schema>;
     constructor() {
         const poolConnection = mysql.createPool({
-            host: "192.168.200.1",
-            user: "root",
-            password: "aiziji500",
-            port: 3306,
-            database: "xablog",
+            host: process.env.DB_HOST,
+            user: process.env.DB_USERNAME,
+            password: process.env.DB_PASSWORD,
+            port: process.env.DB_PORT,
+            database: process.env.DB_DATABASE,
         });
 
         this.db = drizzle(poolConnection, {

@@ -4,9 +4,9 @@ import Elysia from "elysia";
 const JwtService = new Elysia({ name: "Service.Jwt" }).use(
     jwt({
         name: "jwt",
-        secret: "Xiao Ai's Personal Blog",
+        secret: process.env.JWT_SECRET,
         typ: "JWT",
-        exp: "1m",
+        exp: process.env.JWT_EXPIRES_IN,
     })
 );
 

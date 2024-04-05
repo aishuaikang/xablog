@@ -1,26 +1,27 @@
 {
-  "name": "@bun-examples/elysia",
-  "version": "1.0.50",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts",
-    "mysql:push": "bun drizzle-kit push:mysql"
-  },
-  "dependencies": {
-    "@elysiajs/bearer": "^1.0.2",
-    "@elysiajs/jwt": "^1.0.2",
-    "@paralleldrive/cuid2": "^2.2.2",
-    "drizzle-orm": "^0.30.7",
-    "drizzle-typebox": "^0.1.1",
-    "elysia": "latest",
-    "mysql2": "^3.9.3"
-  },
-  "devDependencies": {
-    "bun-types": "latest",
-    "drizzle-kit": "^0.20.14"
-  },
-  "module": "src/index.js",
-  "bun-create": {
-    "start": "bun run src/index.ts"
-  }
+    "name": "@bun-examples/elysia",
+    "version": "1.0.50",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "bun run --watch src/index.ts",
+        "build": "bun build ./src/index.ts --compile --outfile ./build/index",
+        "mysql:push": "bun drizzle-kit push:mysql"
+    },
+    "dependencies": {
+        "@elysiajs/bearer": "^1.0.2",
+        "@elysiajs/jwt": "^1.0.2",
+        "@paralleldrive/cuid2": "^2.2.2",
+        "drizzle-orm": "^0.30.7",
+        "drizzle-typebox": "^0.1.1",
+        "elysia": "latest",
+        "mysql2": "^3.9.3"
+    },
+    "devDependencies": {
+        "bun-types": "latest",
+        "drizzle-kit": "^0.20.14"
+    },
+    "module": "src/index.js",
+    "bun-create": {
+        "start": "bun run src/index.ts"
+    }
 }
