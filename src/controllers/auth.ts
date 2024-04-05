@@ -25,8 +25,7 @@ const AuthController = new Elysia({
 
             return {
                 token,
-                ...user,
-                password: undefined,
+                user,
             };
         },
         {
