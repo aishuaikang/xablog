@@ -1,12 +1,26 @@
-import { createInsertSchema } from "drizzle-typebox";
-import { users } from "../schemas";
-import Elysia, { t } from "elysia";
+import { UserSchema } from "../schemas";
+import Elysia, { Static, t } from "elysia";
 
-export const insertUserSchema = createInsertSchema(users);
+const createUserDto = t.Omit(UserSchema, ["id", "createTime", "updateTime"]);
+
+const updateUserDto = t.Partial(
+    t.Omit(UserSchema, ["id", "createTime", "updateTime"])
+);
+
+const queryUserDto = t.Composite([
+    t.Partial(t.Omit(UserSchema, ["password"])),
+    t.Object({
+        page: t.String(),
+        limit: t.String(),
+    }),
+]);
+
+export type CreateUserDto = Static<typeof createUserDto>;
+export type UpdateUserDto = Static<typeof updateUserDto>;
+export type QueryUserDto = Static<typeof queryUserDto>;
 
 export const UserModel = new Elysia({ name: "Model.User" }).model({
-    createUserDto: t.Omit(insertUserSchema, ["id", "createTime", "updateTime"]),
-    updateUserDto: t.Partial(
-        t.Omit(insertUserSchema, ["id", "createTime", "updateTime"])
-    ),
+    createUserDto,
+    updateUserDto,
+    queryUserDto,
 });

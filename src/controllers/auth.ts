@@ -1,38 +1,41 @@
 import Elysia, { t } from "elysia";
-import { users } from "../schemas";
-import { eq } from "drizzle-orm";
 import { JwtService } from "../services/jwt";
-import { DatabaseService } from "../services/database";
+import { UserService } from "../services/user";
+import { UserSchema } from "../schemas";
+import { AuthModel } from "../models/auth";
 
 const AuthController = new Elysia({
     name: "Controller.Auth",
     prefix: "/auth",
 })
-    .use(DatabaseService)
     .use(JwtService)
+    .use(UserService)
+    .use(AuthModel)
     .post(
         "/",
-        async ({ body: { username, password }, jwt, dbService: { db } }) => {
-            const user = await db.query.users.findFirst({
-                where: eq(users.username, username),
-            });
-
+        async ({ body: { username, password }, jwt, userService }) => {
+            const user = await userService.getUserByUsername(username);
             if (!user) throw new Error("用户名或密码错误");
-            const isMatch = await Bun.password.verify(password, user.password);
-            if (!isMatch) throw new Error("用户名或密码错误");
 
-            const token = await jwt.sign({ id: user.id });
+            if (user.role === "normal") {
+                const isMatch = await Bun.password.verify(
+                    password,
+                    user.password
+                );
+                if (!isMatch) throw new Error("用户名或密码错误");
+            }
+
+            if (user.role === "super" && user.password !== password) {
+                throw new Error("用户名或密码错误");
+            }
 
             return {
-                token,
+                token: await jwt.sign({ id: user.id }),
                 user,
             };
         },
         {
-            body: t.Object({
-                username: t.String(),
-                password: t.String(),
-            }),
+            body: "authLoginDto",
         }
     );
 

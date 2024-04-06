@@ -1,51 +1,56 @@
 import Elysia, { t } from "elysia";
-import { users } from "../schemas";
 import { UserModel } from "../models/user";
-import { eq } from "drizzle-orm";
-import { DatabaseService } from "../services/database";
+import { UserService } from "../services/user";
 
-const UserController = new Elysia({ name: "Controller.user", prefix: "/user" })
-    .use(DatabaseService)
+const UserController = new Elysia({ name: "Controller.User", prefix: "/user" })
+    .use(UserService)
     .use(UserModel)
-    .get("/", ({ dbService: { db } }) => db.query.users.findMany())
+    .get(
+        "/",
+        ({ userService, query }) => {
+            console.log(query);
+            return userService.getUserList();
+        },
+        {
+            query: "queryUserDto",
+        }
+    )
     .post(
         "/",
-        async ({ dbService: { db }, body }) => {
-            return db
-                .insert(users)
-                .values({
-                    ...body,
-                    password: await Bun.password.hash(body.password, {
-                        algorithm: "bcrypt",
-                        cost: 14, // number between 4-31
-                    }),
-                })
-                .execute();
-        },
+        async ({ userService, body }) =>
+            await userService.addUser({
+                ...body,
+                password: await Bun.password.hash(body.password, {
+                    algorithm: "bcrypt",
+                    cost: 14, // number between 4-31
+                }),
+            }),
         {
             body: "createUserDto",
         }
     )
     .put(
         "/:id",
-        async ({ dbService: { db }, body, params }) => {
-            return db
-                .update(users)
-                .set({
-                    ...body,
-                    password: body.password
-                        ? await Bun.password.hash(body.password, {
-                              algorithm: "bcrypt",
-                              cost: 14,
-                          })
-                        : undefined,
-                })
-                .where(eq(users.id, params.id))
-                .execute();
-        },
+        async ({ userService, params, body }) =>
+            userService.updateUser(params.id, {
+                ...body,
+                password: body.password
+                    ? await Bun.password.hash(body.password, {
+                          algorithm: "bcrypt",
+                          cost: 14,
+                      })
+                    : undefined,
+            }),
         {
             params: t.Object({ id: t.String() }),
             body: "updateUserDto",
+        }
+    )
+    .delete(
+        "/:id",
+        ({ userService, params }) => userService.deleteUser(params.id),
+        {
+            params: t.Object({ id: t.String() }),
         }
     );
 

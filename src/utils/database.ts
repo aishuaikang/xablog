@@ -1,9 +1,8 @@
 import { MySql2Database, drizzle } from "drizzle-orm/mysql2";
-import Elysia from "elysia";
 import mysql from "mysql2/promise";
 import * as schema from "../schemas";
 
-class Service {
+class Database {
     public db: MySql2Database<typeof schema>;
     constructor() {
         const poolConnection = mysql.createPool({
@@ -12,13 +11,8 @@ class Service {
             password: process.env.DB_PASSWORD,
             port: process.env.DB_PORT,
             database: process.env.DB_DATABASE,
-            waitForConnections: true,
             connectionLimit: 200,
             maxIdle: 20, // max idle connections, the default value is the same as `connectionLimit`
-            idleTimeout: 30000, // idle connections timeout, in milliseconds, the default value 60000
-            queueLimit: 0,
-            enableKeepAlive: true,
-            keepAliveInitialDelay: 0,
         });
 
         this.db = drizzle(poolConnection, {
@@ -26,16 +20,14 @@ class Service {
             mode: "default",
         });
         poolConnection.on("connection", (connection) => {
-            console.log("connection", connection.getMaxListeners());
+            console.log("数据库连接成功...");
             connection.on("error", (err) => {
-                console.log("connection error", err);
+                console.log("数据库错误...", err);
             });
         });
     }
 }
 
-const DatabaseService = new Elysia({ name: "Service.Database" }).decorate({
-    dbService: new Service(),
-});
+const database = new Database();
 
-export { DatabaseService };
+export default database;
