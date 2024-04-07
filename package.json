@@ -14,7 +14,8 @@
     "drizzle-orm": "^0.30.7",
     "drizzle-typebox": "^0.1.1",
     "elysia": "latest",
-    "mysql2": "^3.9.3"
+    "mysql2": "^3.9.3",
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
     "bun-types": "latest",
