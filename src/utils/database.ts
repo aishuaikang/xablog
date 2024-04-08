@@ -2,7 +2,7 @@ import { MySql2Database, drizzle } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 import * as schema from "../schemas";
 
-class Database {
+class DatabaseUtil {
     public db: MySql2Database<typeof schema>;
     constructor() {
         const poolConnection = mysql.createPool({
@@ -18,16 +18,18 @@ class Database {
         this.db = drizzle(poolConnection, {
             schema,
             mode: "default",
+            logger: true,
         });
         poolConnection.on("connection", (connection) => {
             console.log("数据库连接成功...");
-            connection.on("error", (err) => {
-                console.log("数据库错误...", err);
+            connection.on("error", (error) => {
+                console.error("MySQL connection failed: ", error);
+                process.exit(1);
             });
         });
     }
 }
 
-const database = new Database();
+const databaseUtil = new DatabaseUtil();
 
-export default database;
+export default databaseUtil;

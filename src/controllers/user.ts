@@ -7,31 +7,30 @@ const UserController = new Elysia({ name: "Controller.User", prefix: "/user" })
     .use(UserModel)
     .get(
         "/",
-        ({ userService, query }) => {
-            console.log(query);
-            return userService.getUserList();
-        },
+        async ({ userService, query }) =>
+            await userService.getUserListByQuery(query),
         {
             query: "queryUserDto",
         }
     )
     .post(
         "/",
-        async ({ userService, body }) =>
+        async ({ userService, body }) => {
             await userService.addUser({
                 ...body,
                 password: await Bun.password.hash(body.password, {
                     algorithm: "bcrypt",
                     cost: 14, // number between 4-31
                 }),
-            }),
+            });
+        },
         {
             body: "createUserDto",
         }
     )
     .put(
         "/:id",
-        async ({ userService, params, body }) =>
+        async ({ userService, params, body }) => {
             userService.updateUser(params.id, {
                 ...body,
                 password: body.password
@@ -40,7 +39,8 @@ const UserController = new Elysia({ name: "Controller.User", prefix: "/user" })
                           cost: 14,
                       })
                     : undefined,
-            }),
+            });
+        },
         {
             params: t.Object({ id: t.String() }),
             body: "updateUserDto",
@@ -48,7 +48,9 @@ const UserController = new Elysia({ name: "Controller.User", prefix: "/user" })
     )
     .delete(
         "/:id",
-        ({ userService, params }) => userService.deleteUser(params.id),
+        ({ userService, params }) => {
+            userService.deleteUser(params.id);
+        },
         {
             params: t.Object({ id: t.String() }),
         }

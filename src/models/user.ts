@@ -8,7 +8,7 @@ const updateUserDto = t.Partial(
 );
 
 const queryUserDto = t.Composite([
-    t.Partial(t.Omit(UserSchema, ["password"])),
+    t.Partial(t.Omit(createUserDto, ["password"])),
     t.Object({
         page: t.String(),
         limit: t.String(),

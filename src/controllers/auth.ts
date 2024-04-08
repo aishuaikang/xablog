@@ -3,17 +3,19 @@ import { JwtService } from "../services/jwt";
 import { UserService } from "../services/user";
 import { UserSchema } from "../schemas";
 import { AuthModel } from "../models/auth";
+import { CommonService } from "../services/common";
 
 const AuthController = new Elysia({
     name: "Controller.Auth",
     prefix: "/auth",
 })
     .use(JwtService)
+    .use(CommonService)
     .use(UserService)
     .use(AuthModel)
     .post(
         "/",
-        async ({ body: { username, password }, jwt, userService }) => {
+        async ({ userService, jwt, body: { username, password } }) => {
             const user = await userService.getUserByUsername(username);
             if (!user) throw new Error("用户名或密码错误");
 
@@ -31,7 +33,10 @@ const AuthController = new Elysia({
 
             return {
                 token: await jwt.sign({ id: user.id }),
-                user,
+                user: {
+                    ...user,
+                    password: undefined,
+                },
             };
         },
         {

@@ -3,6 +3,7 @@ import { UserController } from "./controllers/user";
 import { AuthController } from "./controllers/auth";
 import { bearer } from "@elysiajs/bearer";
 import { logger } from "./plugins/logysia";
+import { CommonService } from "./services/common";
 
 const app = new Elysia()
     .use(
@@ -10,16 +11,21 @@ const app = new Elysia()
             logIP: true,
         })
     )
+    .use(CommonService)
     .use(bearer())
-    .onError(({ code, error, set }) => {
-        if (code === "VALIDATION") {
-            return {
-                code: 9999,
-                error: error.validator.Errors(error.value).First(),
-                data: null,
-            };
-        }
-        return { code: set.status, error: error.message, data: null };
+
+    .onError(({ code, error, set, commonService }) => {
+        if (code === "VALIDATION")
+            return commonService.error(
+                error.validator.Errors(error.value).First(),
+                set.status
+            );
+
+        return commonService.error(error, set.status);
+    })
+    .onAfterHandle(({ set, commonService, response }) => {
+        if (set.status === 200)
+            return commonService.success(response, set.status);
     })
     .use(AuthController)
     .guard(

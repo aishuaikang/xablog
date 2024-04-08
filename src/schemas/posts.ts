@@ -37,7 +37,10 @@ export const posts = mysqlTable("posts", {
 });
 
 export const postsRelations = relations(posts, ({ one }) => ({
-    user: one(users),
+    user: one(users, {
+        fields: [posts.userId],
+        references: [users.id],
+    }),
     category: one(categorys),
 }));
 

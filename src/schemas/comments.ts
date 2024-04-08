@@ -29,18 +29,10 @@ export const comments = mysqlTable("comments", {
 });
 
 export const commentsRelations = relations(comments, ({ one }) => ({
-    user: one(users),
+    user: one(users, {
+        fields: [comments.userId],
+        references: [users.id],
+    }),
 }));
-
-// export const postsRelations = relations(posts, ({ one }) => ({
-//     user: one(users, {
-//         fields: [posts.userId],
-//         references: [users.id],
-//     }),
-//     category: one(categorys, {
-//         fields: [posts.categoryId],
-//         references: [categorys.id],
-//     }),
-// }));
 
 export const insertCommentSchema = createInsertSchema(comments);

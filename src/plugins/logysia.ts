@@ -44,8 +44,8 @@ export const logger = (options?: Options) => {
             logStr.push(pc.green(set.status));
 
             logStr.push(new URL(request.url).pathname);
-            const beforeTime: bigint = (store as any).beforeTime;
 
+            const beforeTime: bigint = (store as any).beforeTime;
             logStr.push(durationString(beforeTime));
 
             write(logStr.join(" "));
@@ -66,8 +66,8 @@ export const logger = (options?: Options) => {
             }
 
             logStr.push(error.message);
-            const beforeTime: bigint = (store as any).beforeTime;
 
+            const beforeTime: bigint = (store as any).beforeTime;
             logStr.push(durationString(beforeTime));
 
             write(logStr.join(" "));

@@ -5,6 +5,12 @@ declare module "bun" {
         DB_PASSWORD: string;
         DB_PORT: number;
         DB_DATABASE: string;
+
+        REDIS_HOST: string;
+        REDIS_PORT: number;
+        REDIS_USERNAME: string;
+        REDIS_PASSWORD: string;
+
         JWT_SECRET: string;
         JWT_EXPIRES_IN: string;
     }

@@ -29,7 +29,10 @@ export const uploads = mysqlTable("uploads", {
 });
 
 export const uploadsRelations = relations(uploads, ({ one }) => ({
-    user: one(users),
+    user: one(users, {
+        fields: [uploads.userId],
+        references: [users.id],
+    }),
 }));
 
 export const insertUploadSchema = createInsertSchema(uploads);
