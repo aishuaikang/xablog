@@ -30,7 +30,7 @@ class Service {
             .where(
                 and(
                     ...Object.entries(otherQuery)
-                        .filter(([_key, value]) => value !== undefined)
+                        // .filter(([_key, value]) => value !== undefined)
                         .map(([key, value]) => {
                             return like(
                                 users[key as keyof UserSchemaType],

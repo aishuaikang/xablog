@@ -4,7 +4,7 @@ await Bun.build({
     target: "bun",
     format: "esm",
     sourcemap: "inline",
-    // minify: true,
+    minify: true,
 });
 
 console.log("Build success!");
